@@ -15,7 +15,7 @@ The script was used to generate the video below via macOS screen capture.
 
 ## 🎥 Screen Caputured Tour
 
-[![Watch the video](media/thumbnail.jpg)](https://youtu.be/w1nsBTk0RA8)
+[![Watch the video](media/thumbnail.png)](https://youtu.be/w1nsBTk0RA8)
 
 
 ## How to Run
