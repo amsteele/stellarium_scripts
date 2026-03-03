@@ -14,9 +14,9 @@ Draco, NGC 5906 / Ursa Minor, Polaris / Cassiopeia, IC 1805
 The script was used to generate the video below via macOS screen capture.
 
 ## 🎥 Screen Caputured Tour
-<video controls width="800">
-  <source src="https://youtu.be/w1nsBTk0RA8" type="video/mp4">
-</video>
+
+[![Watch the video](media/thumbnail.jpg)](https://youtu.be/w1nsBTk0RA8)
+
 
 ## How to Run
 
