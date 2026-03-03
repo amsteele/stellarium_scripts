@@ -1,0 +1,148 @@
+// ================================
+// Stellarium Script (.ssc)
+// Video-friendly rewrite (target: ~120s total video time)
+// Uses frame capture helpers (shot / captureFor) and a paced capture plan.
+// IMPORTANT: Launch Stellarium with --screenshot-dir <frames_dir>
+// ================================
+
+
+//  set location and start time
+core.setTimezone("America/Los_Angeles");
+//core.setObserverLocation("Ely, Nevada, Northern America",0.1);
+core.setObserverLocation(-114.8742,39.2533, 1932, 0.5, "Ely, NV","Earth");
+core.setDate("2026:03:05T17:15:00", "local");
+
+//core.setGuiVisible(false);
+
+var alt = 25;
+var fps = 10;
+
+MeteorShowers.setEnableAtStartup(false);
+MeteorShowers.setShowEnableButton(false);
+MeteorShowers.setEnableMarker(false);
+MeteorShowers.setEnableLabels(false);
+core.setMountMode("MountAltAzimuthal");
+
+core.moveToAltAzi(20, 180, 0.1);
+StelMovementMgr.setFlagTracking(false);
+core.clear("natural");
+
+LandscapeMgr.setFlagAtmosphere(true);
+allIDs = LandscapeMgr.getAllLandscapeIDs();
+LandscapeMgr.setCurrentLandscapeID(allIDs[0]);
+
+NebulaMgr.setFlagShow(false);
+NebulaMgr.setFlagHints(false);
+
+SolarSystem.setFlagMoonScale(true);
+SolarSystem.setMoonScale(4);
+core.wait(1);
+
+var obey_skyculture_preference = (core.getEnv("STEL_SCRIPT_OBEY_SKYCULTURE_STYLE") == "1");
+core.setSkyCulture("modern");
+if (!obey_skyculture_preference)
+	StelSkyCultureMgr.setScreenLabelStyle("Native,Translated,Modern");
+core.wait(0.1);
+
+StelSkyCultureMgr.setInfoLabelStyle("Name");
+core.wait(0.1);
+LandscapeMgr.setFlagCardinalPoints(true);
+
+// Scene setup text
+color = "#999999";
+var title = LabelMgr.labelScreen("Constellation Tour", 20, 20, false, 30, color);
+var title2 = LabelMgr.labelScreen("Ely, Nevada", 20, 60, false, 20, color);
+var title3 = LabelMgr.labelScreen("March 5, 2026", 20, 90, false, 20, color);
+
+core.wait(3);  // time to close out 
+
+LabelMgr.setLabelShow(title, true);
+LabelMgr.setLabelShow(title2, true);
+LabelMgr.setLabelShow(title3, true);
+core.wait(3);
+LabelMgr.setLabelShow(title, false);
+LabelMgr.setLabelShow(title2, false);
+LabelMgr.setLabelShow(title3, false);
+
+core.setTimeRate(100  );
+core.waitFor("2026:03:05T17:40:00", "local");
+core.moveToAltAzi(25, 273, 10);     // alt, az, duration
+
+core.setTimeRate(2);
+ConstellationMgr.setFlagLines(false);
+ConstellationMgr.setFlagLabels(false);
+ConstellationMgr.setFlagArt(false);
+ConstellationMgr.setFlagBoundaries(false);
+ConstellationMgr.setArtIntensity(0.6);
+core.wait(1);
+
+
+// --------------------------------
+// Feature block: 
+// --------------------------------
+
+var stops = [
+  { c: "Andromeda",  tgt: "M31",      fov: 5,    dur: 6 },
+  { c: "Taurus",     tgt: "Pleiades", fov: 5,    dur: 6 },
+  { c: "Auriga",     tgt: "IC 410",   fov: 5,    dur: 6 },
+  { c: "Gemini",     tgt: "Jupiter",  fov: 0.7,  dur: 7 },
+  { c: "Orion",      tgt: "M42",      fov: 5,    dur: 6 },
+  { c: "Canis Minor",tgt: "Procyon",  fov: 5,    dur: 6 },
+  { c: "Canis Major",tgt: "Sirius",   fov: 5,    dur: 6 },
+  { c: "Leo",        tgt: "M66",      fov: 1,    dur: 6 },
+  { c: "Ursa Major", tgt: "M101",     fov: 1,    dur: 6 },
+  { c: "Draco",      tgt: "NGC5906",  fov: 1,    dur: 6 },
+  { c: "Ursa Minor", tgt: "Polaris",  fov: 0.07, dur: 7 },
+  { c: "Cassiopeia", tgt: "IC 1805",  fov: 5,    dur: 6 }
+];
+
+for (var i = 0; i < stops.length; i++) {
+	var stop = stops[i];	
+	ConstellationMgr.setFlagIsolateSelected(true);
+	ConstellationMgr.setFlagConstellationPick(true);
+	core.wait(1);
+	core.selectObjectByName(stop.c,false);
+	core.moveToSelectedObject(6);
+	core.setTimeRate(1);
+	core.wait(6);
+	ConstellationMgr.setFlagLines(true);
+	ConstellationMgr.setFlagLabels(true);
+	core.wait(5);
+	ConstellationMgr.setFlagArt(true);
+	core.wait(5);
+
+	ConstellationMgr.setFlagLines(false);
+	ConstellationMgr.setFlagLabels(false);
+	ConstellationMgr.setFlagArt(false);
+
+       // Highlight
+       core.selectObjectByName(stop.tgt,false);
+	core.moveToSelectedObject(2);
+	StelMovementMgr.zoomTo(stop.fov, stop.dur);
+	core.wait(stop.dur);
+
+	ConstellationMgr.deselectConstellations();
+	core.wait(1);
+	StelMovementMgr.zoomTo(50, 6);
+	core.wait(1);
+	core.setTimeRate(180);
+	core.wait(3);
+}
+
+
+core.setTimeRate(2);
+core.moveToAltAzi(25, 180, 15);
+core.wait(10);
+
+ConstellationMgr.setFlagLines(false);
+ConstellationMgr.setFlagLabels(false);
+ConstellationMgr.setFlagArt(false);
+ConstellationMgr.setFlagBoundaries(false);
+ConstellationMgr.setFlagIsolateSelected(false);
+ConstellationMgr.deselectConstellations();
+
+core.wait(10);
+core.setTimeRate(0);
+
+//core.setGuiVisible(true);
+
